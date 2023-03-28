@@ -1,8 +1,6 @@
 # NailLink-API
 ## Description 
 
-## Navigating
-
 ## Screenshots of application
 
 ## Technology Used
@@ -11,4 +9,4 @@
 
 ## Link to Socials
 
-## Credits
+## Credits 
