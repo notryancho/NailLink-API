@@ -2,29 +2,29 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
-from app. import Customer as CustomerModel
+from app import Customer
 
 class Customer(Resource):
     def get(self, customer_id=None):
         if customer_id:
             try:
-                customer = CustomerModel.objects.get(id=customer_id)
+                customer = Customer.objects.get(id=customer_id)
             except (DoesNotExist, ValidationError):
                 return {"message": "Customer not found"}, 404
             return jsonify(customer)
         else:
-            customers = CustomerModel.objects.all()
+            customers = Customer.objects.all()
             return jsonify(customers)
 
     def post(self):
         body = request.get_json()
-        customer = CustomerModel(**body)
+        customer = Customer(**body)
         customer.save()
         return jsonify(customer)
 
     def put(self, customer_id):
         try:
-            customer = CustomerModel.objects.get(id=customer_id)
+            customer = Customer.objects.get(id=customer_id)
         except (DoesNotExist, ValidationError):
             return {"message": "Customer not found"}, 404
 
@@ -35,7 +35,7 @@ class Customer(Resource):
 
     def delete(self, customer_id):
         try:
-            customer = CustomerModel.objects.get(id=customer_id)
+            customer = Customer.objects.get(id=customer_id)
         except (DoesNotExist, ValidationError):
             return {"message": "Customer not found"}, 404
 
