@@ -2,10 +2,10 @@ from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine import DoesNotExist, ValidationError
 
-from models import Review
+from models.review import Review
 
 
-class ReviewResource(Resource):
+class Review(Resource):
     def get(self, review_id=None):
         if review_id:
             try:

@@ -2,7 +2,7 @@ from mongoengine import Document, EmailField, StringField, BooleanField
 from datetime import datetime
 from models.db import db
 
-class User(db.Document):
+class UserModel(db.Document):
     email = db.EmailField(required=True, unique=True)
     password = db.StringField(required=True)
     is_customer = db.BooleanField(required=True)

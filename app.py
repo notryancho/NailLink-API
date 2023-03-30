@@ -1,4 +1,5 @@
 import os
+from models.db import db
 from flask import Flask, request, session, jsonify
 from flask_mongoengine import MongoEngine 
 from mongoengine import connect, Document, ReferenceField, ListField, StringField, EmailField, IntField, FloatField, DateField, BooleanField
@@ -9,7 +10,15 @@ from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_restful import Api
+from models.user import User
 import datetime 
+from resources.user import User 
+from resources.appointment import Appointment
+from resources.customer import Customer
+from resources.nailtech import NailTech
+from resources.service import Service
+from resources.review import Review
+
 
 load_dotenv() 
 
@@ -33,55 +42,12 @@ bcrypt = Bcrypt(app)
 db = MongoEngine(app)
 api = Api(app)
 
-
-class User(db.Document):
-    email = db.EmailField(required=True, unique=True)
-    password = db.StringField(required=True)
-    is_customer = db.BooleanField(required=True)
-    is_nail_tech = db.BooleanField(required=True)
-
-class Customer(db.Document):
-    user_id = db.ReferenceField(User, required=True)
-    name = db.StringField(required=True)
-    appointments = db.ListField(db.ReferenceField('Appointment'))
-
-class NailTech(db.Document):
-    user_id = db.ReferenceField(User, required=True)
-    service = db.ListField(db.ReferenceField('Service'))
-    name = db.StringField(required=True)
-    phone = db.IntField(required=True)
-    bio = db.StringField(required=True)
-    profile_pic = db.StringField(required=True)
-    appointments = db.ListField(db.ReferenceField('Appointment'))
-    reviews = db.ListField(db.ReferenceField('Review'))
-
-class Service(db.Document):
-    name = db.StringField(required=True)
-    description = db.StringField(required=True)
-    price = db.FloatField(required=True)
-
-class Appointment(Document):
-    customer_id = db.ReferenceField(Customer, required=True)
-    nail_tech_id = db.ReferenceField(NailTech, required=True)
-    appt_date = db.DateField(required=True)
-    appt_time = db.DateTimeField(required=True)
-    service_id = db.ReferenceField(Service, required=True)
-    status = db.StringField(required=True, choices=('booked', 'cancelled', 'completed'))
-
-class Review(db.Document):
-    nail_tech_id = db.ReferenceField(NailTech, required=True)
-    customer_id = db.ReferenceField(Customer, required=True)
-    rating = db.IntField(required=True, min_value=1, max_value=5)
-    comment = db.StringField()
-
-
-
-from resources.user import User 
-from resources.appointment import Appointment
-from resources.customer import Customer
-from resources.nailtech import NailTech
-from resources.service import Service
-from resources.review import Review
+# from resources.user import User 
+# from resources.appointment import Appointment
+# from resources.customer import Customer
+# from resources.nailtech import NailTech
+# from resources.service import Service
+# from resources.review import Review
 
 api.add_resource(Appointment, '/appointment')
 api.add_resource(Customer, '/customer')

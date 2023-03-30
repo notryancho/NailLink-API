@@ -1,9 +1,9 @@
 from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
-from models import Service
+from models.service import Service
 
-class ServiceResource(Resource):
+class Service(Resource):
     def get(self, service_id=None):
         if service_id:
             try:
