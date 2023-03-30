@@ -7,7 +7,14 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from flask_cors import CORS
+from flask_restful import Api
 import datetime 
+from resources.appointment import Appointment
+from resources.customer import Customer
+from resources.nailtech import NailTech
+from resources.service import Service
+from resources.review import Review
+from resources.user import User 
 
 load_dotenv() 
 
@@ -30,7 +37,15 @@ Session(app)
 JWTManager(app)
 bcrypt = Bcrypt(app)
 db = MongoEngine(app)
+api = Api(app)
 
+
+api.add_resource(Appointment, '/appointment')
+api.add_resource(Customer, '/customer')
+api.add_resource(NailTech, '/nailtech')
+api.add_resource(Review, '/review')
+api.add_resource(Service, '/service')
+api.add_resource(User, '/user') 
 
 class User(db.Document):
     email = db.EmailField(required=True, unique=True)
@@ -71,6 +86,21 @@ class Service(db.Document):
     name = db.StringField(required=True)
     description = db.StringField(required=True)
     price = db.FloatField(required=True)
+
+# @app.route('/reviews', methods=['POST'])
+# @jwt_required()
+# def create_review():
+#     current_user = get_jwt_identity()
+#     user = User.objects(id=current_user).first()
+#     if not user.is_customer:
+#         return {"message": "Only customers can create reviews"}, 403
+
+#     body = request.get_json()
+#     customer_id = Customer.objects(user_id=current_user).first()
+#     body['customer_id'] = customer_id.id
+#     review = Review(**body)
+#     review.save()
+#     return jsonify(review)
 
 @app.route('/login', methods=['POST'])
 def login():
