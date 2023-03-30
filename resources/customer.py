@@ -2,7 +2,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
-from app import Customer
+from models import Customer
 
 class Customer(Resource):
     def get(self, customer_id=None):

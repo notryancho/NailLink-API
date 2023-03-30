@@ -2,7 +2,7 @@ from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine import DoesNotExist, ValidationError
 
-from app import Review
+from models import Review
 
 
 class ReviewResource(Resource):

@@ -1,7 +1,8 @@
 import os
 from flask import Flask, request, session, jsonify
 from flask_mongoengine import MongoEngine 
-from mongoengine import connect
+from mongoengine import connect, Document, ReferenceField, ListField, StringField, EmailField, IntField, FloatField, DateField, BooleanField
+from mongoengine.fields import DateTimeField
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from bson.objectid import ObjectId
@@ -9,12 +10,6 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_restful import Api
 import datetime 
-from resources.appointment import Appointment
-from resources.customer import Customer
-from resources.nailtech import NailTech
-from resources.service import Service
-from resources.review import Review
-from resources.user import User 
 
 load_dotenv() 
 
@@ -33,19 +28,11 @@ app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 CORS(app)
-Session(app)
 JWTManager(app)
 bcrypt = Bcrypt(app)
 db = MongoEngine(app)
 api = Api(app)
 
-
-api.add_resource(Appointment, '/appointment')
-api.add_resource(Customer, '/customer')
-api.add_resource(NailTech, '/nailtech')
-api.add_resource(Review, '/review')
-api.add_resource(Service, '/service')
-api.add_resource(User, '/user') 
 
 class User(db.Document):
     email = db.EmailField(required=True, unique=True)
@@ -68,12 +55,17 @@ class NailTech(db.Document):
     appointments = db.ListField(db.ReferenceField('Appointment'))
     reviews = db.ListField(db.ReferenceField('Review'))
 
-class Appointment(db.Document):
+class Service(db.Document):
+    name = db.StringField(required=True)
+    description = db.StringField(required=True)
+    price = db.FloatField(required=True)
+
+class Appointment(Document):
     customer_id = db.ReferenceField(Customer, required=True)
     nail_tech_id = db.ReferenceField(NailTech, required=True)
     appt_date = db.DateField(required=True)
-    appt_time = db.TimeField(required=True)
-    service_id = db.ReferenceField('Service', required=True)
+    appt_time = db.DateTimeField(required=True)
+    service_id = db.ReferenceField(Service, required=True)
     status = db.StringField(required=True, choices=('booked', 'cancelled', 'completed'))
 
 class Review(db.Document):
@@ -82,25 +74,21 @@ class Review(db.Document):
     rating = db.IntField(required=True, min_value=1, max_value=5)
     comment = db.StringField()
 
-class Service(db.Document):
-    name = db.StringField(required=True)
-    description = db.StringField(required=True)
-    price = db.FloatField(required=True)
 
-# @app.route('/reviews', methods=['POST'])
-# @jwt_required()
-# def create_review():
-#     current_user = get_jwt_identity()
-#     user = User.objects(id=current_user).first()
-#     if not user.is_customer:
-#         return {"message": "Only customers can create reviews"}, 403
 
-#     body = request.get_json()
-#     customer_id = Customer.objects(user_id=current_user).first()
-#     body['customer_id'] = customer_id.id
-#     review = Review(**body)
-#     review.save()
-#     return jsonify(review)
+from resources.user import User 
+from resources.appointment import Appointment
+from resources.customer import Customer
+from resources.nailtech import NailTech
+from resources.service import Service
+from resources.review import Review
+
+api.add_resource(Appointment, '/appointment')
+api.add_resource(Customer, '/customer')
+api.add_resource(NailTech, '/nailtech')
+api.add_resource(Review, '/review')
+api.add_resource(Service, '/service')
+api.add_resource(User, '/user') 
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -140,6 +128,8 @@ def protected():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
 
    
 
