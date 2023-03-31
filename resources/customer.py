@@ -1,10 +1,11 @@
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import jsonify, request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.customer import Customer
 
 class Customer(Resource):
+    @jwt_required()
     def get(self, customer_id=None):
         if customer_id:
             try:
@@ -16,12 +17,14 @@ class Customer(Resource):
             customers = Customer.objects.all()
             return jsonify(customers)
 
+    @jwt_required()
     def post(self):
         body = request.get_json()
         customer = Customer(**body)
         customer.save()
         return jsonify(customer)
 
+    @jwt_required()
     def put(self, customer_id):
         try:
             customer = Customer.objects.get(id=customer_id)
@@ -33,6 +36,7 @@ class Customer(Resource):
         customer.reload()
         return jsonify(customer)
 
+    @jwt_required()
     def delete(self, customer_id):
         try:
             customer = Customer.objects.get(id=customer_id)
@@ -41,3 +45,4 @@ class Customer(Resource):
 
         customer.delete()
         return {"message": "Customer deleted"}
+

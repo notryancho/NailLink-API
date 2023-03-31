@@ -1,9 +1,11 @@
 from flask import jsonify, request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.nailtech import NailTech
 
 class NailTech(Resource):
+    @jwt_required()
     def get(self, nail_tech_id=None):
         if nail_tech_id:
             try:
@@ -15,12 +17,14 @@ class NailTech(Resource):
             nail_techs = NailTech.objects.all()
             return jsonify(nail_techs)
 
+    @jwt_required()
     def post(self):
         body = request.get_json()
         nail_tech = NailTech(**body)
         nail_tech.save()
         return jsonify(nail_tech)
 
+    @jwt_required()
     def put(self, nail_tech_id):
         try:
             nail_tech = NailTech.objects.get(id=nail_tech_id)
@@ -32,6 +36,7 @@ class NailTech(Resource):
         nail_tech.reload()
         return jsonify(nail_tech)
 
+    @jwt_required()
     def delete(self, nail_tech_id):
         try:
             nail_tech = NailTech.objects.get(id=nail_tech_id)
