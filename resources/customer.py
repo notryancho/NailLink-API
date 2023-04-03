@@ -4,8 +4,8 @@ from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.customer import Customer
 
-class Customer(Resource):
-    @jwt_required()
+class SingleCustomer(Resource):
+    
     def get(self, customer_id=None):
         if customer_id:
             try:

@@ -4,8 +4,8 @@ from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.nailtech import NailTech
 
-class NailTech(Resource):
-    @jwt_required()
+class SingleNailTech(Resource):
+    
     def get(self, nail_tech_id=None):
         if nail_tech_id:
             try:
