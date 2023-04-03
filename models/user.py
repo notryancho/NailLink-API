@@ -10,3 +10,5 @@ class User(db.Document):
     is_nail_tech = db.BooleanField(required=True, default=False)
     creation_date = db.DateTimeField(default=datetime.now)
     modified_date = db.DateTimeField(default=datetime.now)
+    
+ 

@@ -4,25 +4,26 @@ from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.nailtech import NailTech
 
+
 class SingleNailTech(Resource):
     
     def get(self, nail_tech_id=None):
         if nail_tech_id:
             try:
-                nail_tech = NailTech.objects.get(id=nail_tech_id)
+                nail_tech = NailTech.objects.get(id=nail_tech_id).to_dict()
             except (DoesNotExist, ValidationError):
                 return {"message": "NailTech not found"}, 404
             return jsonify(nail_tech)
         else:
             nail_techs = NailTech.objects.all()
-            return jsonify(nail_techs)
+            return jsonify([nail_tech.to_dict() for nail_tech in nail_techs])
 
     @jwt_required()
     def post(self):
         body = request.get_json()
         nail_tech = NailTech(**body)
         nail_tech.save()
-        return jsonify(nail_tech)
+        return jsonify(nail_tech.to_dict())
 
     @jwt_required()
     def put(self, nail_tech_id):
@@ -34,7 +35,7 @@ class SingleNailTech(Resource):
         body = request.get_json()
         nail_tech.update(**body)
         nail_tech.reload()
-        return jsonify(nail_tech)
+        return jsonify(nail_tech.to_dict())
 
     @jwt_required()
     def delete(self, nail_tech_id):
@@ -45,3 +46,4 @@ class SingleNailTech(Resource):
 
         nail_tech.delete()
         return {"message": "NailTech deleted"}
+
