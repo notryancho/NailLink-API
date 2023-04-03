@@ -30,7 +30,7 @@ app.config['JWT_SECRET_KEY'] = APP_SECRET_KEY
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = False
 
-CORS(app)
+CORS(app, origins='http://localhost:3000')
 Session(app)
 jwt = JWTManager(app)
 api = Api(app)
