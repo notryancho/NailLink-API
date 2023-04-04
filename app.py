@@ -1,7 +1,7 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import Flask
 from flask_mongoengine import MongoEngine
-from resources.appointment import Appointments
+from resources.appointment import SingleAppointment
 from resources.customer import SingleCustomer
 from resources.nailtech import SingleNailTech
 from resources.review import Review
@@ -36,7 +36,7 @@ api = Api(app)
 db.init_app(app, print('started'))
 
 api.add_resource(SingleUser, '/user')
-api.add_resource(Appointments, '/appointment')
+api.add_resource(SingleAppointment, '/appointment')
 api.add_resource(SingleCustomer, '/customer')
 api.add_resource(SingleNailTech, '/nailtech')
 api.add_resource(Review, '/review')

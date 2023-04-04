@@ -4,15 +4,39 @@ from mongoengine import Document, ReferenceField, StringField, BooleanField
 from models.customer import Customer
 from models.service import Service
 from models.nailtech import NailTech
-
+from models.user import User
+from mongoengine.fields import DateField, DateTimeField, ReferenceField, StringField, BooleanField, DateTimeField
 
 
 class Appointment(Document):
-    customer_id = db.ReferenceField(Customer, required=False)
-    nail_tech_id = db.ReferenceField(NailTech, required=True)
-    appt_date = db.DateField(required=True)
-    appt_time = db.DateTimeField(required=True)
-    service_id = db.ReferenceField(Service, required=True)
-    status = db.StringField(required=True, choices=('booked', 'cancelled', 'completed'))
-    creation_date = db.DateTimeField(default=datetime.now)
-    modified_date = db.DateTimeField(default=datetime.now)
+    customer_id = ReferenceField(Customer, required=False)
+    nail_tech_id = ReferenceField(NailTech, required=False)
+    appt_date = DateField(required=True)
+    appt_time = StringField(required=True)
+    service_id = ReferenceField(Service, required=True)
+    status = StringField(required=False, choices=('booked', 'cancelled', 'completed'))
+    creation_date = DateTimeField(default=datetime.now)
+    modified_date = DateTimeField(default=datetime.now)
+
+    def clean(self):
+        super(Appointment, self).clean()
+        if self.appt_time is not None:
+            self.appt_time = datetime.strptime(self.appt_time, '%H:%M:%S').time()
+
+    meta = {
+        'indexes': [
+            {'fields': ['customer_id', 'nail_tech_id', 'appt_date', 'appt_time'], 'unique': True}
+        ]
+    }
+
+
+
+
+
+
+
+
+
+
+
+
