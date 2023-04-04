@@ -3,7 +3,7 @@ from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.service import Service
 
-class Service(Resource):
+class Services(Resource):
     def get(self, service_id=None):
         if service_id:
             try:
@@ -17,7 +17,7 @@ class Service(Resource):
 
     def post(self):
         body = request.get_json()
-        service = Service(**body)
+        service = Services(**body)
         service.save()
         return jsonify(service)
 

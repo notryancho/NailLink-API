@@ -4,7 +4,7 @@ from mongoengine.errors import DoesNotExist, ValidationError
 from models.appointment import Appointment
 
 
-class Appointment(Resource):
+class Appointments(Resource):
     def get(self, appointment_id=None):
         if appointment_id:
             try:
@@ -18,7 +18,7 @@ class Appointment(Resource):
 
     def post(self):
         body = request.get_json()
-        appointment = Appointment(**body)
+        appointment = Appointments(**body)
         appointment.save()
         return jsonify(appointment)
 

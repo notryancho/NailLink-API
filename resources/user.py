@@ -1,8 +1,10 @@
 from flask_restful import Resource, reqparse
 from flask import request, session, jsonify, make_response
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from bson.objectid import ObjectId
 from models.user import User
+from models.nailtech import NailTech
+from models.customer import Customer
 from datetime import datetime
 
 class SingleUser(Resource):
@@ -13,7 +15,6 @@ class SingleUser(Resource):
     parser.add_argument('is_customer', type=bool, default=False)
     parser.add_argument('is_nail_tech', type=bool, default=False)
 
-    @jwt_required()
     def get(self, user_id):
         user = User.objects(id=ObjectId(user_id)).first()
         if not user:
@@ -32,9 +33,26 @@ class SingleUser(Resource):
         if existing_user:
             return {'message': 'User with email already exists.'}, 409
 
-        user = User(name=name, email=email, password=password, is_customer=is_customer, is_nail_tech=is_nail_tech)
-        user.save()
-        return {'message': 'User created successfully.'}, 201
+        if is_nail_tech:
+            nailtech = NailTech(name=name, email=email, password=password)
+            nailtech.save()
+            access_token = create_access_token(identity=str(nailtech.id))
+            return {'message': 'User created successfully.', 'user_id': str(nailtech.id), 'access_token': access_token}, 201
+        elif is_customer:
+            customer = Customer(name=name, email=email, password=password)
+            customer.save()
+            access_token = create_access_token(identity=str(customer.id))
+            return {'message': 'User created successfully.', 'user_id': str(customer.id), 'access_token': access_token}, 201
+        else:
+            user = User(name=name, email=email, password=password, is_customer=is_customer, is_nail_tech=is_nail_tech)
+            user.save()
+            access_token = create_access_token(identity=str(user.id))
+            return {'message': 'User created successfully.', 'user_id': str(user.id), 'access_token': access_token}, 201
+
+
+    # Return the access token along with the success message
+        return {'message': 'User created successfully.', 'access_token': access_token}, 201
+
 
     @jwt_required()
     def put(self, user_id):
@@ -60,3 +78,6 @@ class SingleUser(Resource):
 
         user.delete()
         return {'message': 'User deleted successfully.'}, 200
+
+
+
