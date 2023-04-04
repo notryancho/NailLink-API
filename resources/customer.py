@@ -1,8 +1,9 @@
 from flask import jsonify, request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, create_access_token
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.customer import Customer
+from models.user import User
 
 class SingleCustomer(Resource):
     

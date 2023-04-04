@@ -3,7 +3,6 @@ from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.appointment import Appointment
 
-
 class Appointments(Resource):
     def get(self, appointment_id=None):
         if appointment_id:
@@ -18,7 +17,14 @@ class Appointments(Resource):
 
     def post(self):
         body = request.get_json()
-        appointment = Appointments(**body)
+        appointment = Appointment(
+            customer_id=body['customer_id'],
+            nail_tech_id=body['nail_tech_id'],
+            appt_date=body['appt_date'],
+            appt_time=body['appt_time'],
+            service_id=body['service_id'],
+            status=body['status']
+        )
         appointment.save()
         return jsonify(appointment)
 
@@ -41,5 +47,6 @@ class Appointments(Resource):
 
         appointment.delete()
         return {"message": "Appointment deleted successfully"}, 204
+
 
            

@@ -8,7 +8,7 @@ from models.nailtech import NailTech
 
 
 class Appointment(Document):
-    customer_id = db.ReferenceField(Customer, required=True)
+    customer_id = db.ReferenceField(Customer, required=False)
     nail_tech_id = db.ReferenceField(NailTech, required=True)
     appt_date = db.DateField(required=True)
     appt_time = db.DateTimeField(required=True)

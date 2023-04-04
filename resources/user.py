@@ -37,12 +37,12 @@ class SingleUser(Resource):
             nailtech = NailTech(name=name, email=email, password=password)
             nailtech.save()
             access_token = create_access_token(identity=str(nailtech.id))
-            return {'message': 'User created successfully.', 'user_id': str(nailtech.id), 'access_token': access_token}, 201
+            return {'message': 'User created successfully.', 'nailtech_id': str(nailtech.id), 'access_token': access_token}, 201
         elif is_customer:
             customer = Customer(name=name, email=email, password=password)
             customer.save()
             access_token = create_access_token(identity=str(customer.id))
-            return {'message': 'User created successfully.', 'user_id': str(customer.id), 'access_token': access_token}, 201
+            return {'message': 'User created successfully.', 'customer_id': str(customer.id), 'access_token': access_token}, 201
         else:
             user = User(name=name, email=email, password=password, is_customer=is_customer, is_nail_tech=is_nail_tech)
             user.save()
@@ -50,8 +50,7 @@ class SingleUser(Resource):
             return {'message': 'User created successfully.', 'user_id': str(user.id), 'access_token': access_token}, 201
 
 
-    # Return the access token along with the success message
-        return {'message': 'User created successfully.', 'access_token': access_token}, 201
+
 
 
     @jwt_required()
