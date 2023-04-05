@@ -4,6 +4,11 @@ from flask_jwt_extended import jwt_required
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.nailtech import NailTech
 
+class AllNailTechs(Resource):
+    def get(self):
+        nail_techs = NailTech.objects.all()
+        return jsonify(nail_techs)
+
 class SingleNailTech(Resource):
     
     def get(self, nail_tech_id=None):

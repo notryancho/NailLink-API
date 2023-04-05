@@ -1,12 +1,8 @@
-from datetime import datetime
-from models.db import db
-from mongoengine import Document, ReferenceField, StringField, BooleanField
+from datetime import datetime, time
+from mongoengine import Document, StringField, DateTimeField, ReferenceField, DateField
 from models.customer import Customer
-from models.service import Service
 from models.nailtech import NailTech
-from models.user import User
-from mongoengine.fields import DateField, DateTimeField, ReferenceField, StringField, BooleanField, DateTimeField
-
+from models.service import Service
 
 class Appointment(Document):
     customer_id = ReferenceField(Customer, required=False)
@@ -18,25 +14,16 @@ class Appointment(Document):
     creation_date = DateTimeField(default=datetime.now)
     modified_date = DateTimeField(default=datetime.now)
 
-    def clean(self):
-        super(Appointment, self).clean()
-        if self.appt_time is not None:
-            self.appt_time = datetime.strptime(self.appt_time, '%H:%M:%S').time()
+    # def clean(self):
+    #     super(Appointment, self).clean()
+    #     if self.appt_time is not None:
+    #         if isinstance(self.appt_time, time):
+    #             self.appt_time = self.appt_time.strftime('%H:%M:%S')
+    #         else:
+    #             raise ValueError('Invalid appointment time format')
 
     meta = {
         'indexes': [
             {'fields': ['customer_id', 'nail_tech_id', 'appt_date', 'appt_time'], 'unique': True}
         ]
     }
-
-
-
-
-
-
-
-
-
-
-
-

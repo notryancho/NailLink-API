@@ -2,7 +2,12 @@ from flask import jsonify, request
 from flask_restful import Resource
 from mongoengine.errors import DoesNotExist, ValidationError
 from models.appointment import Appointment
-from datetime import datetime
+from datetime import datetime, time
+
+class AllAppointments(Resource):
+    def get(self):
+        appointments = Appointment.objects.all()
+        return jsonify(appointments)
 
 class SingleAppointment(Resource):
     def get(self, appointment_id=None):
@@ -18,17 +23,19 @@ class SingleAppointment(Resource):
 
     def post(self):
         body = request.get_json()
-        try:
-            appt_time_str = body['appt_time']
-            appt_time = datetime.strptime(appt_time_str, '%H:%M:%S').time()
-        except ValueError:
-            return {"message": "Invalid appointment time format, must be in HH:MM:SS format."}, 400
+        # try:
+        #     appt_time_str = body['appt_time']
+        #     appt_time = datetime.strptime(appt_time_str, '%H:%M:%S').time()
+        #     print("APPOINTMENT TIME HERE", appt_time)
+        # except ValueError:
+        #     return {"message": "Invalid appointment time format, must be in HH:MM:SS format."}, 400
 
         appointment = Appointment(
             customer_id=body['customer_id'],
             nail_tech_id=body['nail_tech_id'],
             appt_date=body['appt_date'],
-            appt_time=appt_time,
+            # appt_time=appt_time,
+            appt_time=body['appt_time'],
             service_id=body['service_id'],
             status=body['status']
         )
@@ -59,7 +66,3 @@ class SingleAppointment(Resource):
 
         appointment.delete()
         return {"message": "Appointment deleted successfully"}, 204
-
-
-
-           

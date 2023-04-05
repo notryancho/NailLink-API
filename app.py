@@ -1,12 +1,12 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import Flask
 from flask_mongoengine import MongoEngine
-from resources.appointment import SingleAppointment
+from resources.appointment import SingleAppointment, AllAppointments
 from resources.customer import SingleCustomer
-from resources.nailtech import SingleNailTech
+from resources.nailtech import SingleNailTech, AllNailTechs
 from resources.review import Review
-from resources.service import Services
-from resources.user import SingleUser
+from resources.service import Services, AllServices
+from resources.user import SingleUser, LoginUser
 from flask_session import Session
 from dotenv import load_dotenv
 from flask_restful import Api
@@ -36,11 +36,15 @@ api = Api(app)
 db.init_app(app, print('started'))
 
 api.add_resource(SingleUser, '/user')
+api.add_resource(LoginUser, '/login')
 api.add_resource(SingleAppointment, '/appointment')
+api.add_resource(AllAppointments, '/all-appointments')
 api.add_resource(SingleCustomer, '/customer')
 api.add_resource(SingleNailTech, '/nailtech')
+api.add_resource(AllNailTechs, '/all-nailtechs')
 api.add_resource(Review, '/review')
 api.add_resource(Services, '/service')
+api.add_resource(AllServices, '/all-services')
 
 if __name__ == "__main__":
     app.run(debug=True)

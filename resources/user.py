@@ -9,9 +9,9 @@ from datetime import datetime
 
 class SingleUser(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, required=True, help='name is required')
-    parser.add_argument('email', type=str, required=True, help='Email is required.')
-    parser.add_argument('password', type=str, required=True, help='Password is required.')
+    parser.add_argument('name', type=str, required=False, help='name is required')
+    parser.add_argument('email', type=str, required=False, help='Email is required.')
+    parser.add_argument('password', type=str, required=False, help='Password is required.')
     parser.add_argument('is_customer', type=bool, default=False)
     parser.add_argument('is_nail_tech', type=bool, default=False)
 
@@ -32,7 +32,6 @@ class SingleUser(Resource):
         existing_user = User.objects(email=email).first()
         if existing_user:
             return {'message': 'User with email already exists.'}, 409
-
         if is_nail_tech:
             nailtech = NailTech(name=name, email=email, password=password)
             nailtech.save()
@@ -48,10 +47,7 @@ class SingleUser(Resource):
             user.save()
             access_token = create_access_token(identity=str(user.id))
             return {'message': 'User created successfully.', 'user_id': str(user.id), 'access_token': access_token}, 201
-
-
-
-
+       
 
     @jwt_required()
     def put(self, user_id):
@@ -78,5 +74,25 @@ class SingleUser(Resource):
         user.delete()
         return {'message': 'User deleted successfully.'}, 200
 
+class LoginUser(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('email', type=str, required=True, help='Email is required.')
+    parser.add_argument('password', type=str, required=True, help='Password is required.')
+
+    def post(self):
+        data = SingleUser.parser.parse_args()
+        email = data['email']
+        password = data['password']
+        existing_user = User.objects(email=email, password=password).first()
+        nailtech = NailTech.objects(email=email, password=password).first()
+        customer = Customer.objects(email=email, password=password).first()
+        if existing_user:
+            return make_response(jsonify(user=existing_user))
+        elif nailtech:
+            return make_response(jsonify(nailtech=nailtech))
+        elif customer:
+            return make_response(jsonify(customer=customer))
 
 
+
+     
