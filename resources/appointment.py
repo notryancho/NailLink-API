@@ -8,45 +8,34 @@ class AllAppointments(Resource):
     def get(self):
         appointments = Appointment.objects.all()
         return jsonify(appointments)
-
-class SingleAppointment(Resource):
-    def get(self, appointment_id=None):
-        if appointment_id:
-            try:
-                appointment = Appointment.objects.get(id=appointment_id)
-            except (DoesNotExist, ValidationError):
-                return {"message": "Appointment not found"}, 404
-            return jsonify(appointment)
-        else:
-            appointments = Appointment.objects.all()
-            return jsonify(appointments)
-
+    
     def post(self):
         body = request.get_json()
-        # try:
-        #     appt_time_str = body['appt_time']
-        #     appt_time = datetime.strptime(appt_time_str, '%H:%M:%S').time()
-        #     print("APPOINTMENT TIME HERE", appt_time)
-        # except ValueError:
-        #     return {"message": "Invalid appointment time format, must be in HH:MM:SS format."}, 400
-
         appointment = Appointment(
             customer_id=body['customer_id'],
+            customer_name=body['customer_name'],
             nail_tech_id=body['nail_tech_id'],
+            nail_tech_name=body['nail_tech_name'],
             appt_date=body['appt_date'],
-            # appt_time=appt_time,
             appt_time=body['appt_time'],
             service_id=body['service_id'],
+            service_name=body['service_name'],
+            service_price=body['service_price'],
             status=body['status']
         )
-
         appointment.save()
         return jsonify(appointment)
 
+class SingleAppointment(Resource):
+    def get(self, id):
+        appointment = Appointment.objects.get(id=id)
+        if appointment is None:
+                return {"message": "Appointment not found"}, 404
+        return jsonify(appointment)
 
-    def put(self, appointment_id):
+    def put(self, id):
         try:
-            appointment = Appointment.objects.get(id=appointment_id)
+            appointment = Appointment.objects.get(id=id)
         except (DoesNotExist, ValidationError):
             return {"message": "Appointment not found"}, 404
 
@@ -58,11 +47,9 @@ class SingleAppointment(Resource):
         appointment.reload()
         return jsonify(appointment)
 
-    def delete(self, appointment_id):
-        try:
-            appointment = Appointment.objects.get(id=appointment_id)
-        except (DoesNotExist, ValidationError):
+    def delete(self, id):
+        appointment = Appointment.objects.get(id=id)
+        if appointment is None:
             return {"message": "Appointment not found"}, 404
-
         appointment.delete()
         return {"message": "Appointment deleted successfully"}, 204

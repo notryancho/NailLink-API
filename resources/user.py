@@ -15,12 +15,6 @@ class SingleUser(Resource):
     parser.add_argument('is_customer', type=bool, default=False)
     parser.add_argument('is_nail_tech', type=bool, default=False)
 
-    def get(self, user_id):
-        user = User.objects(id=ObjectId(user_id)).first()
-        if not user:
-            return {'message': 'User not found.'}, 404
-        return {'email': user.email, 'is_customer': user.is_customer, 'is_nail_tech': user.is_nail_tech}, 200
-
     def post(self):
         data = SingleUser.parser.parse_args()
         name = data['name']
@@ -29,9 +23,12 @@ class SingleUser(Resource):
         is_customer = data['is_customer']
         is_nail_tech = data['is_nail_tech']
 
-        existing_user = User.objects(email=email).first()
-        if existing_user:
-            return {'message': 'User with email already exists.'}, 409
+        nailtech = NailTech.objects(email=email).first()
+        customer = Customer.objects(email=email).first()
+        if nailtech:
+            return make_response(jsonify(nailtech=nailtech))
+        elif customer:
+            return make_response(jsonify(customer=customer))
         if is_nail_tech:
             nailtech = NailTech(name=name, email=email, password=password)
             nailtech.save()

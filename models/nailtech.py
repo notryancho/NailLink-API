@@ -6,7 +6,7 @@ class NailTech(db.Document):
     user_id = db.ReferenceField(User, required=False)
     service = db.ListField(db.ReferenceField('Service'))
     name = db.StringField(required=True)
-    email = db.EmailField(required=True, unique=True)
+    email = db.EmailField(required=True)
     password = db.StringField(required=True)
     phone = db.IntField(required=False)
     bio = db.StringField(required=False)

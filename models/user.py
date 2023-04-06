@@ -4,7 +4,7 @@ from models.db import db
 
 class User(db.Document):
     name = db.StringField()
-    email = db.EmailField(unique=True)
+    email = db.EmailField()
     password = db.StringField()
     is_customer = db.BooleanField(default=False)
     is_nail_tech = db.BooleanField(default=False)

@@ -6,10 +6,14 @@ from models.service import Service
 
 class Appointment(Document):
     customer_id = ReferenceField(Customer, required=False)
+    customer_name = StringField()
     nail_tech_id = ReferenceField(NailTech, required=False)
+    nail_tech_name = StringField()
     appt_date = DateField(required=True)
     appt_time = StringField(required=True)
     service_id = ReferenceField(Service, required=True)
+    service_name = StringField()
+    service_price = StringField()
     status = StringField(required=False, choices=('booked', 'cancelled', 'completed'))
     creation_date = DateTimeField(default=datetime.now)
     modified_date = DateTimeField(default=datetime.now)
